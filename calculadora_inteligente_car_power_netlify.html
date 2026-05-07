@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Power - Produtos</title>
+
+<style>
+body { margin:0; font-family: Arial, sans-serif; background:#0b0f1a; color:#fff; }
+header { text-align:center; padding:20px; background:#000; }
+header img { max-width:220px; }
+
+.wrap { max-width:1100px; margin:auto; padding:20px; display:grid; grid-template-columns: 1fr 360px; gap:20px; }
+.card { background:#0f1626; border-radius:14px; padding:16px; }
+
+.item { display:grid; grid-template-columns: 1fr auto auto auto; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.price { color:#67f0c3; }
+
+.btn { width:34px; height:34px; border:none; border-radius:8px; color:#fff; font-weight:700; cursor:pointer; }
+.minus { background:#b71c1c; }
+.plus { background:#1b8f4b; }
+
+.export {
+  margin-top:15px;
+  width:100%;
+  padding:12px;
+  background:#00abff;
+  border:none;
+  color:#fff;
+  font-size:16px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.summary .line { display:flex; justify-content:space-between; margin:6px 0; }
+.summary .total { margin-top:10px; font-size:28px; color:#67f0c3; font-weight:800; }
+</style>
+</head>
+
+<body>
+<header>
+<img src="https://cdn.discordapp.com/attachments/1477048159200083998/1500883090447401223/CarPowerLs.png?ex=69fe024d&is=69fcb0cd&hm=aa39f5bd1e3446afd04eae4e747b2d51b900a153da442bbddc41d585e8b8422a&">
+<h1>Calculadora de Produtos</h1>
+</header>
+
+<div class="wrap">
+<div class="card">
+<h2>Produtos</h2>
+<div id="produtos"></div>
+</div>
+
+<div class="card summary" id="areaPDF">
+<h2>Resumo</h2>
+<div id="resumo"></div>
+<div class="total" id="total">R$ 0,00</div>
+
+</div>
+</div>
+
+
+
+<script>
+const produtos = [
+{ id:'kit_reparo', nome:'Kit Reparo', preco:3000 },
+{ id:'chave', nome:'Chave Inglesa', preco:3000 },
+{ id:'pneu', nome:'Pneu', preco:500 },
+{ id:'nitro', nome:'Nitro', preco:35000 },
+{ id:'macaco', nome:'Macaco Hidráulico', preco:4500 }
+];
+
+let quantidades = {};
+produtos.forEach(p => quantidades[p.id] = 0);
+
+const div = document.getElementById('produtos');
+produtos.forEach(p => {
+div.innerHTML += `
+<div class="item">
+<div>${p.nome}<div class="price">R$ ${p.preco.toLocaleString('pt-BR')}</div></div>
+<button class="btn minus" onclick="changeQty('${p.id}', -1)">-</button>
+<div id="q_${p.id}">0</div>
+<button class="btn plus" onclick="changeQty('${p.id}', 1)">+</button>
+</div>`;
+});
+
+function changeQty(id, delta){
+quantidades[id] = Math.max(0, quantidades[id] + delta);
+document.getElementById('q_'+id).innerText = quantidades[id];
+calc();
+}
+
+function calc(){
+let total = 0;
+let resumo = '';
+
+produtos.forEach(p => {
+let q = quantidades[p.id];
+if(q > 0){
+let sub = q * p.preco;
+total += sub;
+resumo += `<div class='line'><span>${p.nome} x${q}</span><span>R$ ${sub.toLocaleString('pt-BR')}</span></div>`;
+}
+});
+
+document.getElementById('resumo').innerHTML = resumo;
+document.getElementById('total').innerText = 'R$ ' + total.toLocaleString('pt-BR');
+}
+
+
+</script>
+</body>
+</html>
